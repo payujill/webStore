@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>候位與訂餐系統</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/jquery.toast.css">
+  <script src="js/jquery.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.toast.js" type="text/javascript"></script>
+<script>
+var wait = 3; 
+var order3 =0;  //小計價錢
+$(function () {
+    
+    debug.innerHTML = '<strong>目前<font color="red">' + wait + "組</font></strong>";
+    var menuList =  //測試用的預約**********************************************************
+        [
+            { phone: "0937001123", name: "李", member: "2"},
+            { phone: "0953666888", name: "王", member: "4"},
+            { phone: "0953666000", name: "陳", member: "6"}
+        ];
+
+     for(var i = 0; i< menuList.length; i++){
+         var item = menuList[i];
+         //alert(item.name);  
+         var s = '<li class="list-group-item" ondblclick="abcgo(this)"><span class="badge">未入座</span>' + item.phone 
+                   +"[" + item.name + "小姐]    " + item.member + "  人" 
+                   +"</li>";
+       $("#waitingList").append(s);
+       }//測試用的內容  
+$("#loginButton").click(function () {
+    var s = '<li class="list-group-item" ondblclick="abcgo(this)"><span class="badge">未入座</span>' + userphone.value 
+               +"    [" + username.value + "]    " 
+               + usermember.value + "人</li>";
+     $("#waitingList").append(s);
+     wait = wait +1;
+     debug.innerHTML = '<strong>目前<font color="red">' + wait + "組</font></strong>";
+     userphone.value = "";
+     username.value = "";
+     usermember.value = "";
+     //alert(username.value);
+})
+var menuList =  //原始菜單***********************************************************
+        [
+            { name: "培根蛋餅", pri: "35", sale:"Y" },
+            { name: "肉鬆蛋餅", pri: "35", sale:"Y"  },
+            { name: "熱狗蛋餅", pri: "35", sale:"n"  },
+            { name: "里肌蛋餅", pri: "40", sale:"Y"  },
+            { name: "薯餅蛋餅", pri: "45", sale:"Y"  },
+        ];
+
+     for(var i = 0; i< menuList.length; i++){
+         var item = menuList[i];
+         
+         if(item.sale=="n"){
+             var s = '<li class="list-group-item" style="font-size: 16px"><span class="badge">已售完</span>' + item.name 
+                   +" [" + item.pri + "元]" 
+                   +"</li>";
+         }
+         else{
+             var s = '<li class="list-group-item" style="font-size: 16px">' + item.name 
+                   +" [" + item.pri + "元]" 
+                   +"</li>";
+         }
+         
+          $("#menu").append(s);
+         //alert(menuList[i].sale);
+     } 
+    var option1List =
+        [
+            { name: "起士", pri: "10" },
+            { name: "蔬菜", pri: "10" },
+            { name: "套餐(點心與飲料各選1)", pri: "50" },
+            { name: "套餐點心:  炸湯圓", pri: "0" },
+            { name: "套餐點心:  蘿蔔糕", pri: "0" },
+            { name: "套餐點心:  芋泥地瓜球", pri: "0" },
+            
+            { name: "套餐飲料:  古早味紅茶", pri: "0" },
+            { name: "套餐飲料:  奶茶", pri: "0" },
+            { name: "套餐飲料:  豆漿", pri: "0" },
+            { name: "套餐飲料:  柳橙汁", pri: "5" },
+            { name: "套餐飲料:  鮮奶茶", pri: "10" },
+        ];
+
+    // for(var i = 0; i< 3; i++){
+    //     var item = option1List[i];
+    //     var s = '<li class="list-group-item" style="color:red">' + item.name 
+    //               +" [+" + item.pri + "元]" 
+    //               +"</li>";
+ 
+    //     $("#option1").append(s);}
+     for(var i = 0; i< option1List.length; i++){
+         var item = option1List[i];
+         var item2 = option1List[i].name.substr(4,1)
+         //alert(item2);
+         if(item2 == ":"){
+         var s = '<li class="list-group-item"><span class="label badge-warning">' + item.name.substr(0,4) + "</span>"
+                   + item.name.substr(5,10) 
+                   +" [+" + item.pri + "元]" 
+                   +"</li>";}
+         else{
+           var s = '<li class="list-group-item">' + item.name 
+                   +" [+" + item.pri + "元]" 
+                   +"</li>";
+         }
+ 
+         $("#option1").append(s);}
+         //***************************************
+    //
+    
+    
+    //*********************************
+$("#menu li").dblclick(function () {
+        var iIndex = $(this).index();   //選出在陣列中的位置
+        var order1 = menuList[iIndex];
+        if(order1.sale=="n"){
+            showToast("已售完,不要誤按喲", order1.name);
+            //alert("已售完,不要誤按喲");
+        }
+        else{
+        //alert("我在order" + jIndex);
+        $(this).css("background-color", "#ffc500");  //變色
+        
+        var s = '<li class="list-group-item bg-orange" ondblclick="abc123(this)">' + order1.name 
+                   +" [" + order1.pri + "元]"
+                   +"</li>";
+          $("#order").append(s);
+          
+          order3= order3 + Number(order1.pri); 
+          //alert("目前小計:" + order3 ); 
+          //<h2 id="debug">已點餐<font size=3>小計價格:</font></h2>
+          //debug.innerHTML = '<h2 id="debug">已點餐<font size=3>目前小計:' + order3 + "元</font></h2>";
+          howmuch.innerHTML = '已點餐<font size=3>目前小計:</font><font color="red">' + order3 + "元</font>";}
+    })
+$("#option1 li").dblclick(function () {
+        var jIndex = $(this).index();   //選出在陣列中的位置
+        //alert("我在option1" + jIndex);
+        $(this).css("background-color", "#ffc500");  //在option裡變粉色底
+        
+        // var order2 = option1List[jIndex];
+        // if(jIndex == "1"|jIndex=="2"|jIndex=="0"){
+        //     var s = '<li class="list-group-item" ondblclick="abc123(this)" style="color:red">' + order2.name 
+        //           +" [+" + order2.pri + "元]"
+        //           +"</li>";
+        // }
+        // else{
+        // var s = '<li class="list-group-item bg-orange" ondblclick="abc123(this)">' + order2.name 
+        //           +" [+" + order2.pri + "元]"
+        //           +"</li>";}
+        var item = option1List[jIndex];
+        var item2 = option1List[jIndex].name.substr(4,1)
+         
+         if(item2 == ":"){
+         var s = '<li class="list-group-item" ondblclick="abc123(this)"><span class="label badge-warning">' + item.name.substr(0,4) + "</span>"
+                   + item.name.substr(5,10) 
+                   +" [+" + item.pri + "元]" 
+                   +"</li>";}
+         else{
+           var s = '<li class="list-group-item" ondblclick="abc123(this)">' + item.name 
+                   +" [+" + item.pri + "元]" 
+                   +"</li>";
+         }
+          $("#order").append(s);
+          
+          order3= order3 + Number(item.pri); 
+          //alert("目前小計:" + order3 ); 
+          //debug.innerHTML = "目前小計:" + order3;
+          howmuch.innerHTML = '已點餐<font size=3>目前小計:</font>' + order3 + "元";
+    })
+       
+       
+})  // end of init. 
+function abcgo(e){
+    var iIndex = $(e).text().substr(0,3); //整個e是li的字串
+    $(e).remove();
+     //alert(iIndex);
+     if(iIndex=="未入座"){
+         var result = $(e).html().replace("未入座","已入座");//可取出還有bage的語法
+         var result1 = result.replace("badge", "badge badge-warning") 
+         //alert(result);
+         
+         var s = '<li class="list-group-item" ondblclick="abcgo(this)">' + result1 
+               + "</li>";
+         $("#haveSet").append(s);
+         wait = wait -1;
+         debug.innerHTML = '<strong>目前<font color="red">' + wait + "組</font></strong>";
+         
+     }
+     else{
+         var result = $(e).html().replace("已入座","未入座");//可取出還有bage的語法
+         var result1 = result.replace("badge badge-warning", "badge")
+         //alert(result);
+         
+         var s = '<li class="list-group-item" ondblclick="abcgo(this)">' + result1 
+               + "</li>";
+         
+         
+         $("#waitingList").append(s);
+         wait = wait +1;
+         debug.innerHTML = '<strong>目前<font color="red">' + wait + "組</font></strong>";
+     }
+     
+}
+function abc123(e){
+    var jIndex = $(e).index();
+    //debug.innerHTML = objArray[2].lastName + "<br>";
+    var result = $("#order li").eq(jIndex).text();
+    var result1 = result.slice(-4, -2);
+    order3 = order3 - Number(result1);
+    howmuch.innerHTML = '已點餐<font size=3>目前小計:</font><font color="red">' + order3 + "元</font>";
+    //alert(order3);
+    $("#order li").eq(jIndex).remove();
+}
+
+// 使用方式:
+// showToast("標題", "提示文字") 例如:
+// showToast("Hint", "請點一下正確的圖案");
+function showToast(heading, message) {
+    $.toast({
+        text: message, // Text that is to be shown in the toast
+        heading: heading, // Optional heading to be shown on the toast
+        icon: 'error', // Type of toast icon
+        showHideTransition: 'fade', // fade, slide or plain
+        allowToastClose: true, // Boolean value true or false
+        hideAfter: 3000, // false to make it sticky or number representing the miliseconds as time after which toast needs to be hidden
+        stack: 5, // false if there should be only one toast at a time or a number representing the maximum number of toasts to be shown at a time
+        position: 'bottom-left', // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values
+        textAlign: 'left',  // Text alignment i.e. left, right or center
+        loader: true,  // Whether to show loader or not. True by default
+        loaderBg: '#9ec600',  // Background color of the toast loader
+        beforeShow: function () { }, // will be triggered before the toast is shown
+        afterShown: function () { }, // will be triggered after the toat has been shown
+        beforeHide: function () { }, // will be triggered before the toast gets hidden
+        afterHidden: function () { }  // will be triggered after the toast has been hidden
+    });
+}
+</script>  
+<style> /*設定CSS的部份開始 */
+body {
+font-family: "微軟正黑體", "Microsoft JhengHei", "新細明體", "PMingLiU", "細明體", "MingLiU", "標楷體", "DFKai-sb", serif,Comic Sans MS,arial,helvetica,sans-serif,Georgia, "Times New Roman", Times, serif;
+}
+
+.jumbotron { 
+    background-color: #ffc500; /* 黃 */
+    color: #ffffff;
+    padding: 100px 25px;}
+.container-fluid {
+    padding: 60px 50px;}
+.logo-small {
+    color: #ffc500;
+    font-size: 50px;}
+.logo-white {
+    color: #ffffff;
+    font-size: 40px;}
+.rowset {
+    font-size: 20px;}
+.badge-warning {
+  background-color: #f89406;
+}
+.bg-orange {
+    background-color: #ffc500;}
+/*以下是NAVBAR的設定 */
+.navbar {
+    margin-bottom: 0;
+    background-color: #ffc500;
+    z-index: 9999;
+    border: 0;
+    font-size: 16px !important;
+    line-height: 1.42857143 !important;
+    letter-spacing: 4px;
+    border-radius: 0;
+}
+
+.navbar li a, .navbar .navbar-brand {
+    color: #fff !important;
+}
+
+.navbar-nav li a:hover, .navbar-nav li.active a {
+    color: #ffc500 !important;
+    background-color: #fff !important;
+}
+
+.navbar-default .navbar-toggle {
+    border-color: transparent;
+    color: #fff !important;
+}
+/*回到最上頁的註角 */
+footer .glyphicon {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #ffc500;}
+    
+.carousel-inner img {
+    /*-webkit-filter: grayscale(90%);
+    /*filter: grayscale(90%); /* make all photos black and white */ 
+    width:60%; /* Set width to 100% */
+    margin: auto;
+}
+
+.carousel-caption h3 {
+    color: #fff !important;
+}
+
+
+
+</style>
+
+</head>
+<body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="60">
+
+<div class="jumbotron text-center">
+  <h1>吃光Cacti</h1> 
+  <p>美味料理都該建築在安全食材之上</p> 
+</div>
+
+  <div class="carousel-inner" role="listbox">
+    <div class="item active">
+      <img src="css/look01.jpg">
+      <div class="carousel-caption">
+        <h3>餐廳前廊</h3>
+        <p>用餐區域包括室外與室內兩個部份</p>
+      </div> 
+    </div>
+  </div>
+    
+
+<div id="phone" class="container-fluid text-center">
+  <h2>聯絡方式</h2>
+  <h4></h4>
+  <br>
+  <div class="row">
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-home logo-small"></span>
+      <h3>地址</h3>
+      <h4>西屯區惠中路98號</h4>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-earphone logo-small"></span>
+      <h3>電話</h3>
+      <h4>04 2317 5298</h4>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-dashboard logo-small"></span>
+      <h3>營業時間</h3>
+      <h4>星期二~星期日</br>早上7:00~下午2:00</h4>
+    </div>
+    </div>
+    <br><br>
+</div>
+
+<div id="waiting" class="container-fluid text-center bg-orange">
+  <h2>現場候位</h2>
+  <h2 id="debug"></h2> 
+  <p>滑鼠左鍵連按2下,即可移動已入座或未入座</p>
+  
+  <div class="row">
+    <div class="col-sm-4 rowset">
+      <span class="glyphicon glyphicon-home logo-small"></span>
+      <div class="form-group">
+        <label for="userphone">
+        <span class="glyphicon glyphicon-phone"></span>手機</label>
+        <input type="text" id="userphone" placeholder="輸入格式為9碼" />
+        </div>
+        <div class="form-group">
+        <label for="username">
+        <span class="glyphicon glyphicon-pencil"></span>姓名</label>
+        <input type="text" id="username"  />
+        </div>
+        <div class="form-group">
+        <label for="usermember">
+        <span class="glyphicon glyphicon-user"></span>人數</label>
+        <input type="text" id="usermember"  />
+        </div>
+        <button id="loginButton" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-log-in"></span>  新增候位</button>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-user logo-white"></span>
+      <h3>候位清單</h3>
+      <h4></h4>
+      <ul id="waitingList" class="list-group"></ul>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-cutlery logo-white"></span>
+      <h3>已入座</h3>
+      <h4></h4>
+      <ul id="haveSet" class="list-group"></ul>
+    </div>
+    </div>
+    <br><br>
+
+</div> <!--現場候位 ****結束*****-->
+
+<div id="orderlist" class="container-fluid">
+  <div class="text-center">
+  <h2>點餐系統</h2>
+  <h4></h4> 
+  <p>滑鼠左鍵連按2下,即可選擇餐點</p><br/>
+  </div>
+  <div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+            <h2>酥皮蛋餅     <font size=3>[價格]</font></h2>
+            <ul id="menu" class="list-group"></ul>
+        </div>
+
+        <div class="col-sm-4">
+            <h2>附加選項     <font size=3>[+補差價的金額]</h2>
+            <ul id="option1" class="list-group"></ul>
+            <!--&nbsp;-->
+        </div>
+
+        <div class="col-sm-4 bg-orange">
+             <h2 id="howmuch"></h2>
+            <ul id="order" class="list-group"></ul>
+        </div>
+
+    </div>  <!-- end of row -->
+
+</div> <!-- end of container -->
+</div>
+<div class="carousel-inner" role="listbox">
+    <div class="item active">
+      <img src="css/set01.jpg">
+      <div class="carousel-caption">
+        <h3>套餐點心</h3>
+        <p>目前有3種搭配, 分別是<br/>芋泥地瓜球,炸湯圓,蘿蔔糕</p>
+      </div> 
+    </div>
+  </div>
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span> 
+      </button>
+      <a class="navbar-brand" href="#myPage">吃光Cacti</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#phone">聯絡方式</a></li>
+        <li><a href="#waiting">現場候位</a></li>
+        <li><a href="#orderlist">點餐系統</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<footer class="container-fluid text-center">
+  <a href="#myPage" title="To Top">
+    <span class="glyphicon glyphicon-chevron-up"></span>
+  </a>
+  <p>Bootstrap Theme Made By <a href="https://www.w3schools.com/bootstrap//bootstrap_templates.asp" target="_blank" title="Visit w3schools">www.w3schools.com</a></p> 
+</footer>
+<script>
+  
+  
+</script>
+</body>
+</html>
